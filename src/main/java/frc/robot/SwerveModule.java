@@ -7,6 +7,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -53,13 +54,14 @@ public class SwerveModule {
         mDriveMotor.setInverted(Constants.Swerve.driveMotorInvert.value == 0 ? true : false);
         mDriveMotor.setIdleMode(
                 Constants.Swerve.driveNeutralMode == NeutralModeValue.Brake ? IdleMode.kBrake : IdleMode.kCoast);
-        mDriveMotor.getEncoder().setVelocityConversionFactor(1/Constants.Swerve.driveGearRatio);
+        mDriveMotor.getEncoder().setVelocityConversionFactor(1 / (Constants.Swerve.driveGearRatio * 60));
+        mDriveMotor.getEncoder().setPositionConversionFactor(1 / Constants.Swerve.driveGearRatio);
+
         mDriveMotor.setSmartCurrentLimit(Constants.Swerve.driveCurrentLimit);
         mDriveMotor.getPIDController().setP(Constants.Swerve.driveKP);
         mDriveMotor.getPIDController().setD(Constants.Swerve.driveKD);
         mDriveMotor.getPIDController().setI(Constants.Swerve.driveKI);
         mDriveMotor.setOpenLoopRampRate(Constants.Swerve.openLoopRamp);
-
 
         mDriveMotor.getEncoder().setPosition(0.0);
     }
@@ -73,12 +75,13 @@ public class SwerveModule {
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
         if (isOpenLoop) {
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
-            mDriveMotor.setControl(driveDutyCycle);
+            mDriveMotor.set(driveDutyCycle.Output);
         } else {
             driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond,
                     Constants.Swerve.wheelCircumference);
             driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
-            mDriveMotor.setControl(driveVelocity);
+            mDriveMotor.getPIDController().setReference(driveVelocity.Velocity, ControlType.kVelocity, 0,
+                    driveVelocity.FeedForward);
         }
     }
 
@@ -93,13 +96,13 @@ public class SwerveModule {
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-                Conversions.RPSToMPS(mDriveMotor.getVelocity().getValue(), Constants.Swerve.wheelCircumference),
+                Conversions.RPSToMPS(mDriveMotor.getEncoder().getVelocity(), Constants.Swerve.wheelCircumference),
                 Rotation2d.fromRotations(mAngleMotor.getPosition().getValue()));
     }
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-                Conversions.rotationsToMeters(mDriveMotor.getPosition().getValue(),
+                Conversions.rotationsToMeters(mDriveMotor.getEncoder().getPosition(),
                         Constants.Swerve.wheelCircumference),
                 Rotation2d.fromRotations(mAngleMotor.getPosition().getValue()));
     }
