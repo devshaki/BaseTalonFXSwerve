@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
-    public AHRS gyro; // TODO: replace with NAVX
+    public AHRS gyro;
 
     public Swerve() {
         
