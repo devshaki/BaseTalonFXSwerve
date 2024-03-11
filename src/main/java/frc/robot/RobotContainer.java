@@ -30,7 +30,7 @@ import frc.robot.subsystems.Arm.ArmSubsystem;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver = new Joystick(0);
+    private final Joystick driver = new Joystick(frc.robot.Constants.OI.kXboxControllerPort+1);
 
     //thee arm
     private final ArmSubsystem m_ArmSubsystem;
@@ -83,9 +83,9 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
 
         //thee arm
-         m_ArmSubsystem.setDefaultCommand(new HoldCommand(m_ArmSubsystem));
+        m_ArmSubsystem.setDefaultCommand(new HoldCommand(m_ArmSubsystem));
 
-         oi.commandXboxController.y().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeReverseSpeed));
+        oi.commandXboxController.y().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeReverseSpeed));
         oi.commandXboxController.x().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeSpeed));
         oi.commandXboxController.a()
                 .whileTrue(new ParallelCommandGroup(new ArmCommand(m_ArmSubsystem, Arm.Stats.kIntakeAngle),

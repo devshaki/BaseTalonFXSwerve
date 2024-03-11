@@ -85,6 +85,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        
         SmartDashboard.putNumber("Arm Angle", getAngle());
         SmartDashboard.putNumber("arm_left_output", m_motor_left.getAppliedOutput());
         SmartDashboard.putNumber("arm_right_output", m_motor_right.getAppliedOutput());

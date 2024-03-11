@@ -13,6 +13,13 @@ import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
+    public static final double stickDeadband = 0.1;
+    
+    public static class OI {
+        public static final int kXboxControllerPort = 0;
+        public static final double kXboxcontrollerDrift = 0.1;
+    }
+
     public static class Intake {
         public static class Motors {
             // also the id if there is only one motor
@@ -30,11 +37,6 @@ public final class Constants {
         }
     }
 
-    public static class OI {
-        public static final int kXboxControllerPort = 0;
-        public static final double kXboxcontrollerDrift = 0.1;
-    }
-
     public static class Shooter {
         public static class Motors {
             public static final int ShooterMotorLeftID = 32;
@@ -50,10 +52,11 @@ public final class Constants {
 
         public static class PID {
             public static final double kP = 0.1;
-            public static final double kI = 0.000;
+            public static final double kI = 0;
             public static final double kD = 0;
         }
     }
+
 
     public static class Arm {
         public static class Motors {
@@ -64,10 +67,10 @@ public final class Constants {
         public static class Stats {
             public static final double kLimitAngle = 90;
             //todo put actual angles and then it will do the thing
-            public static final double encoderOffset = 225;
+            public static final double encoderOffset = 219;
             public static final double gearRatio = 1 / 25.0;
-            public static final double ampAngle = 70;
-            public static final double speakerAngle = 5;
+            public static final double ampAngle = 110;
+            public static final double speakerAngle = 10;
             public static final double driveAngle = 40;
             public static final double kThreashold = 0;
             public static final double kIntakeAngle = 5;
@@ -88,7 +91,6 @@ public final class Constants {
 
     }
 
-    public static final double stickDeadband = 0.1;
 
     public static final class Swerve {
         public static final int pigeonID = 1;
@@ -198,7 +200,7 @@ public final class Constants {
             public static final int driveMotorID = 11;
             public static final int angleMotorID = 15;
             public static final int canCoderID = 16;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees((0.194824 * 360) - 180);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees((0.194824 * 360) - 180  );
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
