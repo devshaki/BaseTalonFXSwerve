@@ -13,6 +13,81 @@ import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
+    public static class Intake {
+        public static class Motors {
+            // also the id if there is only one motor
+            public static final int kUpperMotorLeftID = 31;
+            public static final int kUpperMotorRightID = 34;
+        }
+
+        public static class Stats {
+            // todo: set the speed needed, and everything in constants honestly
+            public static final double kIntakeSpeed = -0.4;
+            public static final double kIntakeReverseSpeed = 0.4
+            ;
+            public static final double kPushingNodeInRounds = 1;
+            public static final double kShooterSpeed = -0.05;
+        }
+    }
+
+    public static class OI {
+        public static final int kXboxControllerPort = 0;
+        public static final double kXboxcontrollerDrift = 0.1;
+    }
+
+    public static class Shooter {
+        public static class Motors {
+            public static final int ShooterMotorLeftID = 32;
+            public static final int ShooterMotorRightID = 33;
+
+        }
+
+        public static class Stats {
+            // todo: set the speed needed
+            public static final double kIShooterSpeed = 0.0;
+            public static final double kPutInAmpSpeed = 0.0;
+        }
+
+        public static class PID {
+            public static final double kP = 0.1;
+            public static final double kI = 0.000;
+            public static final double kD = 0;
+        }
+    }
+
+    public static class Arm {
+        public static class Motors {
+            public static final int kLeftMotorID = 22;
+            public static final int kRightMotorID = 21;
+        }
+
+        public static class Stats {
+            public static final double kLimitAngle = 90;
+            //todo put actual angles and then it will do the thing
+            public static final double encoderOffset = 225;
+            public static final double gearRatio = 1 / 25.0;
+            public static final double ampAngle = 70;
+            public static final double speakerAngle = 5;
+            public static final double driveAngle = 40;
+            public static final double kThreashold = 0;
+            public static final double kIntakeAngle = 5;
+            public static final double climbAngle = 0;
+
+        }
+
+        public static class Encoders {
+            public static final int kLeftEncoderID = 0;
+            public static final int kRightEncoderID = 0;
+        }
+
+        public static class Pid {
+            public static final double kP = 0.1;
+            public static final double kI = 0;
+            public static final double kD = 0.1;
+        }
+
+    }
+
     public static final double stickDeadband = 0.1;
 
     public static final class Swerve {
