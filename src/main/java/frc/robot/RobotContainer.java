@@ -5,11 +5,22 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.robot.Constants.Arm;
+import frc.robot.Constants.Intake;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
+import frc.robot.commands.Arm.ArmCommand;
+import frc.robot.commands.Arm.HoldCommand;
+import frc.robot.commands.Intake.IntakeCommand;
+import frc.robot.commands.Intake.IntakeNodeCommand;
+import frc.robot.commands.Shooter.ShootSmartRPMCommand;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Arm.ArmSubsystem;
+import frc.robot.subsystems.Intake.IntakeSubsystem;
+import frc.robot.subsystems.Shooter.ShooterSubsystem;
+import frc.robot.subsystems.Arm.ArmSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,6 +31,13 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
+
+    //thee arm
+    private final ArmSubsystem m_ArmSubsystem;
+
+    private final IntakeSubsystem m_IntakeSubsystem;
+    private final ShooterSubsystem m_ShooterSubsystem;
+    private final OI oi;
 
     /* Drive Controls */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -36,6 +54,10 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+        this.oi = new OI();
+        this.m_IntakeSubsystem = new IntakeSubsystem();
+        this.m_ShooterSubsystem = new ShooterSubsystem();
+        this.m_ArmSubsystem = new ArmSubsystem();
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 
@@ -59,6 +81,25 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+
+        //thee arm
+         m_ArmSubsystem.setDefaultCommand(new HoldCommand(m_ArmSubsystem));
+
+         oi.commandXboxController.y().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeReverseSpeed));
+        oi.commandXboxController.x().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeSpeed));
+        oi.commandXboxController.a()
+                .whileTrue(new ParallelCommandGroup(new ArmCommand(m_ArmSubsystem, Arm.Stats.kIntakeAngle),
+                        new IntakeNodeCommand(m_IntakeSubsystem, m_ShooterSubsystem)));
+
+        oi.commandXboxController.rightBumper()
+                .whileTrue(new ParallelCommandGroup(new ShootSmartRPMCommand(m_ShooterSubsystem, 4500),
+                        new ArmCommand(m_ArmSubsystem, Arm.Stats.speakerAngle)));
+
+        oi.commandXboxController.leftBumper()
+                .whileTrue(new ArmCommand(m_ArmSubsystem, Arm.Stats.ampAngle));
+
+        oi.commandXboxController.b().whileTrue(new ArmCommand(m_ArmSubsystem, Arm.Stats.kIntakeAngle));
+
     }
 
     /**
