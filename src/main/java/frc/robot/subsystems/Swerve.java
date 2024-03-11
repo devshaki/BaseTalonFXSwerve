@@ -89,6 +89,11 @@ public class Swerve extends SubsystemBase {
         return swerveOdometry.getPoseMeters();
     }
 
+    public Pose2d getPoseInvertedGyro() {
+        Pose2d pose = swerveOdometry.getPoseMeters();
+        return new Pose2d(pose.getTranslation(),pose.getRotation().times(-1));
+    }
+
     public void setPose(Pose2d pose) {
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
     }
@@ -106,7 +111,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public Rotation2d getGyroYaw() {
-        return Rotation2d.fromDegrees(gyro.getYaw());
+        return Rotation2d.fromDegrees((double) 360-gyro.getFusedHeading() + 0);
     }
 
     public void resetModulesToAbsolute(){
@@ -119,6 +124,7 @@ public class Swerve extends SubsystemBase {
     public void periodic(){
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
+        SmartDashboard.putNumber("Robot Heading", getHeading().getDegrees());
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
