@@ -13,16 +13,15 @@ import frc.robot.commands.Intake.IntakeCommand;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 
-
 public class SingleNoteAuto extends SequentialCommandGroup {
-    public SingleNoteAuto(ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake,double ShooterAngle){
+    public SingleNoteAuto(ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake, double ShooterAngle) {
         addCommands(
-            new ParallelCommandGroup(
-                new ShootSmartRPMCommand(shooters, 4500),
-                new ArmCommand(arm, ShooterAngle),
-                new SequentialCommandGroup(
-                    new WaitCommand(1.5),
-                    new IntakeCommand(intake, Intake.Stats.kIntakeSpeed)))
-            .withTimeout(5));
+                new ParallelCommandGroup(
+                        new ShootSmartRPMCommand(shooters, 4500),
+                        new ArmCommand(arm, ShooterAngle),
+                        new SequentialCommandGroup(
+                                new WaitCommand(1),
+                                new IntakeCommand(intake, Intake.Stats.kIntakeSpeed)))
+                        .withTimeout(2));
     }
 }

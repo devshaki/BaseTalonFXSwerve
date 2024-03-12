@@ -5,6 +5,8 @@ import frc.robot.subsystems.Swerve;
 
 import java.util.List;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Intake.IntakeCommand;
 
 import frc.robot.subsystems.Arm.ArmSubsystem;
@@ -28,21 +29,22 @@ import frc.robot.subsystems.Shooter.ShooterSubsystem;
 
 import frc.robot.autos.SingleNoteAuto;
 
-public class DoubleNoteAuto extends SequentialCommandGroup {
-    public DoubleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
+public class TripleNoteAuto extends SequentialCommandGroup {
+    public TripleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
         TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond / 2.0,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
 
         Trajectory Trajectory = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(0)),
-                List.of(),
                 new Pose2d(Units.inchesToMeters(45), 0, new Rotation2d(0)),
+                List.of(new Translation2d(Units.inchesToMeters(20), Units.inchesToMeters(35))),
+                new Pose2d(Units.inchesToMeters(45), Units.inchesToMeters(65), new Rotation2d(0)),
                 config);
 
         var thetaController = new ProfiledPIDController(
-                Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
+                Constants.AutoConstants.kPThetaController, 0, 0,
+                Constants.AutoConstants.kThetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         SwerveControllerCommand SwerveControllerCommand = new SwerveControllerCommand(
@@ -55,14 +57,35 @@ public class DoubleNoteAuto extends SequentialCommandGroup {
                 s_Swerve::setModuleStates,
                 s_Swerve);
 
+        Trajectory Trajectory2 = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(Units.inchesToMeters(45), Units.inchesToMeters(60), new Rotation2d(0)),
+                List.of(),
+                new Pose2d(Units.inchesToMeters(45), Units.inchesToMeters(0), new Rotation2d(0)),
+                config);
+
+        SwerveControllerCommand SwerveControllerCommand2 = new SwerveControllerCommand(
+                Trajectory2,
+                s_Swerve::getPoseInvertedGyro,
+                Constants.Swerve.swerveKinematics,
+                new PIDController(Constants.AutoConstants.kPXController, 0, 0),
+                new PIDController(Constants.AutoConstants.kPYController, 0, 0),
+                thetaController,
+                s_Swerve::setModuleStates,
+                s_Swerve);
+
         addCommands(
-                new InstantCommand(() -> s_Swerve.setPose(Trajectory.getInitialPose())), // SET INITIAL POSITIONs
-                new SingleNoteAuto(arm, shooters, intake, Constants.Arm.Stats.speakerAngle), // SHOOT LOADED NOTE
+                new DoubleNoteAuto(s_Swerve, arm, shooters, intake),
+                new InstantCommand(() -> s_Swerve.setPose(Trajectory.getInitialPose())), // SET INITIAL
+
+                // SwerveControllerCommand,// POSITIONs
                 new ParallelCommandGroup(
                         SwerveControllerCommand, // DRIVE TO NOTE
-                        new intakeNoteAuto(arm, shooters, intake).withTimeout(2)),
-                new InstantCommand(() -> s_Swerve.zeroModules()), // INTAKE NOTE
-                new WaitCommand(0.05),
+                        new intakeNoteAuto(arm, shooters, intake).withTimeout(3.5)), // INTAKE NOTE
+                new InstantCommand(() -> s_Swerve.zeroModules()),
+
+                new InstantCommand(() -> s_Swerve.setPose(Trajectory2.getInitialPose())), // SET INITIAL
+                SwerveControllerCommand2,
+                new InstantCommand(() -> s_Swerve.zeroModules()),
                 new SingleNoteAuto(arm, shooters, intake, Constants.Arm.Stats.speakerAngleFar));
     }
 }
