@@ -67,15 +67,15 @@ public final class Constants {
         public static class Stats {
             public static final double kLimitAngle = 90;
             //todo put actual angles and then it will do the thing
-            public static final double encoderOffset = 219;
+            public static final double encoderOffset = 216.5;
             public static final double gearRatio = 1 / 25.0;
             public static final double ampAngle = 110;
-            public static final double speakerAngle = 10;
+            public static final double speakerAngle = 8;
             public static final double driveAngle = 40;
             public static final double kThreashold = 0;
-            public static final double kIntakeAngle = 5;
+            public static final double kIntakeAngle = 2;
             public static final double climbAngle = 0;
-
+            public static final double speakerAngleFar = 27;
         }
 
         public static class Encoders {

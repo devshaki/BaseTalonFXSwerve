@@ -1,11 +1,14 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
@@ -81,24 +84,33 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-
-        //thee arm
-        m_ArmSubsystem.setDefaultCommand(new HoldCommand(m_ArmSubsystem));
-
-        oi.commandXboxController.y().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeReverseSpeed));
+        /* Intake Button */
+        oi.commandXboxController.a().whileTrue(new ParallelCommandGroup(new ArmCommand(m_ArmSubsystem, Arm.Stats.kIntakeAngle),
+        new IntakeNodeCommand(m_IntakeSubsystem, m_ShooterSubsystem)));//Intake command group
+        /* Shooter Buttons */
+        oi.commandXboxController.rightBumper().whileTrue(new ParallelCommandGroup(new ShootSmartRPMCommand(m_ShooterSubsystem, 4500),
+        new ArmCommand(m_ArmSubsystem, Arm.Stats.speakerAngle)));
         oi.commandXboxController.x().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeSpeed));
-        oi.commandXboxController.a()
-                .whileTrue(new ParallelCommandGroup(new ArmCommand(m_ArmSubsystem, Arm.Stats.kIntakeAngle),
-                        new IntakeNodeCommand(m_IntakeSubsystem, m_ShooterSubsystem)));
+        /* Default command */
+        m_ArmSubsystem.setDefaultCommand(new HoldCommand(m_ArmSubsystem));
+        /* Reversed intake */
+        oi.commandXboxController.y().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeReverseSpeed));
 
-        oi.commandXboxController.rightBumper()
-                .whileTrue(new ParallelCommandGroup(new ShootSmartRPMCommand(m_ShooterSubsystem, 4500),
-                        new ArmCommand(m_ArmSubsystem, Arm.Stats.speakerAngle)));
 
-        oi.commandXboxController.leftBumper()
-                .whileTrue(new ArmCommand(m_ArmSubsystem, Arm.Stats.ampAngle));
 
-        oi.commandXboxController.b().whileTrue(new ArmCommand(m_ArmSubsystem, Arm.Stats.kIntakeAngle));
+        // oi.commandXboxController.b().whileTrue(new ArmCommand(m_ArmSubsystem, Arm.Stats.kIntakeAngle));
+
+
+
+
+        // oi.commandXboxController.rightBumper()
+        //         .whileTrue(new ParallelCommandGroup(new ShootSmartRPMCommand(m_ShooterSubsystem, 4500),
+        //                 new ArmCommand(m_ArmSubsystem, Arm.Stats.speakerAngle)));
+
+        // oi.commandXboxController.leftBumper()
+        //         .whileTrue(new ArmCommand(m_ArmSubsystem, Arm.Stats.ampAngle));
+
+        
 
     }
 
@@ -109,6 +121,11 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return new testAuto(s_Swerve);
+
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> s_Swerve.setPose(new Pose2d(0.0,0.0,Rotation2d.fromDegrees(0)))),
+            new ArmCommand(m_ArmSubsystem, 20).withTimeout(3), 
+            new DoubleNoteAuto(s_Swerve,m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
+            // new SingleNoteAuto(m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngleFar));
     }
 }
