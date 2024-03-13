@@ -22,18 +22,18 @@ import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 
 public class ArmSubsystem extends SubsystemBase {
-    private final CANSparkMax m_motor_left, m_motor_right;
+    private final CANSparkMax m_motor_left;//, m_motor_right;
     private final DutyCycleEncoder m_encoder;
 
     private PIDController pidController = new PIDController(Arm.Pid.kP, Arm.Pid.kD, Arm.Pid.kI);
 
     public ArmSubsystem() {
         m_motor_left = new CANSparkMax(Arm.Motors.kLeftMotorID, MotorType.kBrushless);
-        m_motor_right = new CANSparkMax(Arm.Motors.kRightMotorID, MotorType.kBrushless);
+        // m_motor_right = new CANSparkMax(Arm.Motors.kRightMotorID, MotorType.kBrushless);
         m_motor_left.restoreFactoryDefaults();
-        m_motor_right.restoreFactoryDefaults();
+        // m_motor_right.restoreFactoryDefaults();
         m_motor_left.burnFlash();
-        m_motor_right.burnFlash();
+        // m_motor_right.burnFlash();
 
         m_encoder = new DutyCycleEncoder(Arm.Encoders.kLeftEncoderID);
         pidController.disableContinuousInput();
@@ -43,7 +43,7 @@ public class ArmSubsystem extends SubsystemBase {
         // m_motor_left.setSmartCurrentLimit(AllRobot.kAllMotorsLimitInAmpr);
         // m_motor_right.setSmartCurrentLimit(AllRobot.kAllMotorsLimitInAmpr);
         m_motor_left.setIdleMode(IdleMode.kBrake);
-        m_motor_right.setIdleMode(IdleMode.kBrake);
+        // m_motor_right.setIdleMode(IdleMode.kBrake);
 
         // m_motor_right.follow(m_motor_left, true);
         SmartDashboard.putNumber("arm_voltage", 0);
@@ -57,7 +57,7 @@ public class ArmSubsystem extends SubsystemBase {
         // voltage = MathUtil.clamp(voltage, -12, 12);
         SmartDashboard.putNumber("arm_wanted_voltage", voltage);
         m_motor_left.setVoltage(-voltage);
-        m_motor_right.setVoltage(voltage);
+        // m_motor_right.setVoltage(voltage);
     }
 
     public void SetAngle(double TargetAngle) {
@@ -88,7 +88,7 @@ public class ArmSubsystem extends SubsystemBase {
         
         SmartDashboard.putNumber("Arm Angle", getAngle());
         SmartDashboard.putNumber("arm_left_output", m_motor_left.getAppliedOutput());
-        SmartDashboard.putNumber("arm_right_output", m_motor_right.getAppliedOutput());
+        // SmartDashboard.putNumber("arm_right_output", m_motor_right.getAppliedOutput());
 
         pidController.setP(SmartDashboard.getNumber("Arm kP", 0));
         pidController.setI(SmartDashboard.getNumber("Arm kI", 0));

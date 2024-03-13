@@ -32,7 +32,7 @@ import frc.robot.autos.SingleNoteAuto;
 public class TripleNoteAuto extends SequentialCommandGroup {
     public TripleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
         TrajectoryConfig config = new TrajectoryConfig(
-                Constants.AutoConstants.kMaxSpeedMetersPerSecond / 2.0,
+                Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
 

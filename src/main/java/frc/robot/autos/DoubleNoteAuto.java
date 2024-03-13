@@ -31,7 +31,7 @@ import frc.robot.autos.SingleNoteAuto;
 public class DoubleNoteAuto extends SequentialCommandGroup {
     public DoubleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
         TrajectoryConfig config = new TrajectoryConfig(
-                Constants.AutoConstants.kMaxSpeedMetersPerSecond / 2.0,
+                Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
 
@@ -62,7 +62,7 @@ public class DoubleNoteAuto extends SequentialCommandGroup {
                         SwerveControllerCommand, // DRIVE TO NOTE
                         new intakeNoteAuto(arm, shooters, intake).withTimeout(2)),
                 new InstantCommand(() -> s_Swerve.zeroModules()), // INTAKE NOTE
-                new WaitCommand(0.05),
+                new WaitCommand(0.2),
                 new SingleNoteAuto(arm, shooters, intake, Constants.Arm.Stats.speakerAngleFar));
     }
 }
