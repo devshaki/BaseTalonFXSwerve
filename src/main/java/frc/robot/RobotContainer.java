@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.autos.*;
+import frc.robot.autos.Center.CenterTripleNoteAuto;
+import frc.robot.autos.Left.LeftDoubleNoteAuto;
 import frc.robot.commands.*;
 import frc.robot.commands.Arm.ArmCommand;
 import frc.robot.commands.Arm.HoldCommand;
@@ -126,7 +128,7 @@ public class RobotContainer {
         return new SequentialCommandGroup(new SequentialCommandGroup(
                 new InstantCommand(() -> s_Swerve.setPose(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)))),
                 new ArmCommand(m_ArmSubsystem, 20).withTimeout(1),
-                new TripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem)).withTimeout(15),
+                new LeftDoubleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem)).withTimeout(15),
                 new InstantCommand(() -> s_Swerve.zeroModules()));
         // new SingleNoteAuto(m_ArmSubsystem, m_ShooterSubsystem,
         // m_IntakeSubsystem,Constants.Arm.Stats.speakerAngleFar));

@@ -1,6 +1,8 @@
-package frc.robot.autos;
+package frc.robot.autos.Center;
 
 import frc.robot.Constants;
+import frc.robot.autos.SubCommand.SingleNoteAuto;
+import frc.robot.autos.SubCommand.intakeNoteAuto;
 import frc.robot.subsystems.Swerve;
 
 import java.util.List;
@@ -26,10 +28,8 @@ import frc.robot.subsystems.Arm.ArmSubsystem;
 import frc.robot.subsystems.Intake.IntakeSubsystem;
 import frc.robot.subsystems.Shooter.ShooterSubsystem;
 
-import frc.robot.autos.SingleNoteAuto;
-
-public class DoubleNoteAuto extends SequentialCommandGroup {
-    public DoubleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
+public class CenterDoubleNoteAuto extends SequentialCommandGroup {
+    public CenterDoubleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
         TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -58,9 +58,8 @@ public class DoubleNoteAuto extends SequentialCommandGroup {
         addCommands(
                 new InstantCommand(() -> s_Swerve.setPose(Trajectory.getInitialPose())), // SET INITIAL POSITIONs
                 new SingleNoteAuto(arm, shooters, intake, Constants.Arm.Stats.speakerAngle), // SHOOT LOADED NOTE
-                new ParallelCommandGroup(
-                        SwerveControllerCommand, // DRIVE TO NOTE
-                        new intakeNoteAuto(arm, shooters, intake).withTimeout(2)),
+                SwerveControllerCommand.alongWith(
+                    new intakeNoteAuto(arm, shooters, intake).onlyWhile(() -> !SwerveControllerCommand.isFinished())),
                 new InstantCommand(() -> s_Swerve.zeroModules()), // INTAKE NOTE
                 new WaitCommand(0.2),
                 new SingleNoteAuto(arm, shooters, intake, Constants.Arm.Stats.speakerAngleFar));

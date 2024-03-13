@@ -1,11 +1,11 @@
-package frc.robot.autos;
+package frc.robot.autos.Left;
 
 import frc.robot.Constants;
+import frc.robot.autos.SubCommand.SingleNoteAuto;
+import frc.robot.autos.SubCommand.intakeNoteAuto;
 import frc.robot.subsystems.Swerve;
 
 import java.util.List;
-
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -21,34 +21,33 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Intake.IntakeCommand;
 
 import frc.robot.subsystems.Arm.ArmSubsystem;
 import frc.robot.subsystems.Intake.IntakeSubsystem;
 import frc.robot.subsystems.Shooter.ShooterSubsystem;
 
-import frc.robot.autos.SingleNoteAuto;
-
-public class TripleNoteAuto extends SequentialCommandGroup {
-    public TripleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
+public class LeftDoubleNoteAuto extends SequentialCommandGroup {
+    public LeftDoubleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
         TrajectoryConfig config = new TrajectoryConfig(
-                Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+                Constants.AutoConstants.kMaxSpeedMetersPerSecond / 2,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
 
-        Trajectory Trajectory = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(Units.inchesToMeters(45), 0, new Rotation2d(0)),
-                List.of(new Translation2d(Units.inchesToMeters(20), Units.inchesToMeters(35))),
-                new Pose2d(Units.inchesToMeters(45), Units.inchesToMeters(65), new Rotation2d(0)),
+        var thetaController = new ProfiledPIDController(
+                Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        
+        Trajectory TrajectoryA = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                List.of(new Translation2d(Units.inchesToMeters(0),Units.inchesToMeters(-55))),
+                new Pose2d(Units.inchesToMeters(60), Units.inchesToMeters(-60), new Rotation2d(0)),
                 config);
 
-        var thetaController = new ProfiledPIDController(
-                Constants.AutoConstants.kPThetaController, 0, 0,
-                Constants.AutoConstants.kThetaControllerConstraints);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        SwerveControllerCommand SwerveControllerCommand = new SwerveControllerCommand(
-                Trajectory,
+        SwerveControllerCommand SwerveControllerCommandA = new SwerveControllerCommand(
+                TrajectoryA,
                 s_Swerve::getPoseInvertedGyro,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
@@ -57,14 +56,15 @@ public class TripleNoteAuto extends SequentialCommandGroup {
                 s_Swerve::setModuleStates,
                 s_Swerve);
 
-        Trajectory Trajectory2 = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(Units.inchesToMeters(45), Units.inchesToMeters(60), new Rotation2d(0)),
+        Trajectory TrajectoryB = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(Units.inchesToMeters(60), Units.inchesToMeters(-65), Rotation2d.fromDegrees(0)),
                 List.of(),
-                new Pose2d(Units.inchesToMeters(45), Units.inchesToMeters(0), new Rotation2d(0)),
+                new Pose2d(Units.inchesToMeters(5), 0, new Rotation2d(0)),
                 config);
 
-        SwerveControllerCommand SwerveControllerCommand2 = new SwerveControllerCommand(
-                Trajectory2,
+
+        SwerveControllerCommand SwerveControllerCommandB = new SwerveControllerCommand(
+                TrajectoryB,
                 s_Swerve::getPoseInvertedGyro,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
@@ -74,17 +74,15 @@ public class TripleNoteAuto extends SequentialCommandGroup {
                 s_Swerve);
 
         addCommands(
-                new DoubleNoteAuto(s_Swerve, arm, shooters, intake),
-                new InstantCommand(() -> s_Swerve.setPose(Trajectory.getInitialPose())), // SET INITIAL
+                new InstantCommand(() -> s_Swerve.setPose(TrajectoryA.getInitialPose())), // SET INITIAL POSITIONs
+                new SingleNoteAuto(arm, shooters, intake, Constants.Arm.Stats.speakerAngle), // SHOOT LOADED NOTE
+                SwerveControllerCommandA.alongWith(
+                    new intakeNoteAuto(arm, shooters, intake).onlyWhile(() -> !SwerveControllerCommandA.isFinished())),
+                new InstantCommand(() -> s_Swerve.zeroModules()), // INTAKE NOTE
+                
 
-                // SwerveControllerCommand,// POSITIONs
-                new ParallelCommandGroup(
-                        SwerveControllerCommand, // DRIVE TO NOTE
-                        new intakeNoteAuto(arm, shooters, intake).withTimeout(3.5)), // INTAKE NOTE
-                new InstantCommand(() -> s_Swerve.zeroModules()),
-
-                new InstantCommand(() -> s_Swerve.setPose(Trajectory2.getInitialPose())), // SET INITIAL
-                SwerveControllerCommand2,
+                new InstantCommand(() -> s_Swerve.setPose(TrajectoryB.getInitialPose())), // SET INITIAL POSITIONs
+                SwerveControllerCommandB,
                 new InstantCommand(() -> s_Swerve.zeroModules()),
                 new SingleNoteAuto(arm, shooters, intake, Constants.Arm.Stats.speakerAngleFar));
     }
