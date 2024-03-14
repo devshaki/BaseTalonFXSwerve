@@ -51,6 +51,7 @@ public class RobotContainer {
     private final int translationAxis = XboxController.Axis.kLeftY.value;
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
+    private final int speedModAxis = XboxController.Axis.kRightTrigger.value;
 
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
@@ -73,7 +74,9 @@ public class RobotContainer {
                         () -> -driver.getRawAxis(translationAxis),
                         () -> -driver.getRawAxis(strafeAxis),
                         () -> -driver.getRawAxis(rotationAxis),
-                        () -> robotCentric.getAsBoolean()));
+                        () -> robotCentric.getAsBoolean(),
+                        () -> driver.getRawAxis(speedModAxis)
+                        ));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -128,7 +131,7 @@ public class RobotContainer {
         return new SequentialCommandGroup(new SequentialCommandGroup(
                 new InstantCommand(() -> s_Swerve.setPose(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)))),
                 new ArmCommand(m_ArmSubsystem, 20).withTimeout(1),
-                new LeftDoubleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem)).withTimeout(15),
+                new CenterTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem)).withTimeout(15),
                 new InstantCommand(() -> s_Swerve.zeroModules()));
         // new SingleNoteAuto(m_ArmSubsystem, m_ShooterSubsystem,
         // m_IntakeSubsystem,Constants.Arm.Stats.speakerAngleFar));
