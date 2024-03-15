@@ -56,8 +56,11 @@ public class ArmSubsystem extends SubsystemBase {
     public void setVoltage(double voltage) {
         // voltage = MathUtil.clamp(voltage, -12, 12);
         SmartDashboard.putNumber("arm_wanted_voltage", voltage);
-        m_motor_left.setVoltage(-voltage);
-        m_motor_right.setVoltage(voltage);
+        m_motor_left.setVoltage(-voltage - Arm.Pid.kF);
+        m_motor_right.setVoltage(voltage + Arm.Pid.kF);
+        // m_motor_left.setVoltage(-Arm.Pid.kF);
+        // m_motor_right.setVoltage(Arm.Pid.kF);
+
     }
 
     public void SetAngle(double TargetAngle) {

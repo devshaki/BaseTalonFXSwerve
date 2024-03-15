@@ -65,7 +65,7 @@ public final class Constants {
         public static class Stats {
             public static final double kLimitAngle = 90;
             // todo put actual angles and then it will do the thing
-            public static final double encoderOffset = 216.5;
+            public static final double encoderOffset = 156;
             public static final double gearRatio = 1 / 25.0;
             public static final double ampAngle = 110;
             public static final double speakerAngle = 7 ;
@@ -82,9 +82,10 @@ public final class Constants {
         }
 
         public static class Pid {
-            public static final double kP = 0.06;
-            public static final double kI = 0.02;
-            public static final double kD = 0.15;
+            public static final double kP = 0.1;
+            public static final double kI = 0.0;
+            public static final double kD = 0.02;
+            public static final double kF = 0.65; // volts
         }
 
     }
