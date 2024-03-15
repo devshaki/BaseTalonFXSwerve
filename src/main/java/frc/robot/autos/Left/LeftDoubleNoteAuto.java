@@ -48,7 +48,7 @@ public class LeftDoubleNoteAuto extends SequentialCommandGroup {
 
         SwerveControllerCommand SwerveControllerCommandA = new SwerveControllerCommand(
                 TrajectoryA,
-                s_Swerve::getPose,
+                s_Swerve::getPoseInvertedGyro,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
@@ -65,7 +65,7 @@ public class LeftDoubleNoteAuto extends SequentialCommandGroup {
 
         SwerveControllerCommand SwerveControllerCommandB = new SwerveControllerCommand(
                 TrajectoryB,
-                s_Swerve::getPose,
+                s_Swerve::getPoseInvertedGyro,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),

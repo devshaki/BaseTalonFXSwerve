@@ -21,7 +21,7 @@ public class SingleNoteAuto extends SequentialCommandGroup {
                         new ArmCommand(arm, ShooterAngle),
                         new SequentialCommandGroup(
                                 new WaitCommand(1),
-                                new IntakeCommand(intake, Intake.Stats.kIntakeSpeed)))
+                                new IntakeCommand(intake, Intake.Stats.kIntakeShootSpeed)))
                         .withTimeout(2));
     }
 }

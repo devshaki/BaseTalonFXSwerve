@@ -106,7 +106,7 @@ public class RobotContainer {
         oi.commandXboxController.rightBumper()
                 .whileTrue(new ParallelCommandGroup(new ShootSmartRPMCommand(m_ShooterSubsystem, 4500),
                         new ArmCommand(m_ArmSubsystem, Arm.Stats.speakerAngle)));
-        oi.commandXboxController.x().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeSpeed));
+        oi.commandXboxController.x().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeShootSpeed));
         /* Default command */
         m_ArmSubsystem.setDefaultCommand(new HoldCommand(m_ArmSubsystem));
         /* Reversed intake */

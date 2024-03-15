@@ -39,7 +39,7 @@ public class CenterTripleNoteAuto extends SequentialCommandGroup {
         Trajectory Trajectory = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(Units.inchesToMeters(45), 0, new Rotation2d(0)),
                 List.of(new Translation2d(Units.inchesToMeters(20), Units.inchesToMeters(35))),
-                new Pose2d(Units.inchesToMeters(45), Units.inchesToMeters(65), new Rotation2d(0)),
+                new Pose2d(Units.inchesToMeters(65), Units.inchesToMeters(65), new Rotation2d(0)),
                 config);
 
         var thetaController = new ProfiledPIDController(
@@ -49,7 +49,7 @@ public class CenterTripleNoteAuto extends SequentialCommandGroup {
 
         SwerveControllerCommand SwerveControllerCommand = new SwerveControllerCommand(
                 Trajectory,
-                s_Swerve::getPose,
+                s_Swerve::getPoseInvertedGyro,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
@@ -58,14 +58,14 @@ public class CenterTripleNoteAuto extends SequentialCommandGroup {
                 s_Swerve);
 
         Trajectory Trajectory2 = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(Units.inchesToMeters(45), Units.inchesToMeters(60), new Rotation2d(0)),
+                new Pose2d(Units.inchesToMeters(65), Units.inchesToMeters(60), new Rotation2d(0)),
                 List.of(),
                 new Pose2d(Units.inchesToMeters(45), Units.inchesToMeters(0), new Rotation2d(0)),
                 config);
 
         SwerveControllerCommand SwerveControllerCommand2 = new SwerveControllerCommand(
                 Trajectory2,
-                s_Swerve::getPose,
+                s_Swerve::getPoseInvertedGyro,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),

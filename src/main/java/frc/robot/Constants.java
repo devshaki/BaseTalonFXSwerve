@@ -29,7 +29,8 @@ public final class Constants {
 
         public static class Stats {
             // todo: set the speed needed, and everything in constants honestly
-            public static final double kIntakeSpeed = -0.6;
+            public static final double kIntakeSpeed = -0.5;
+            public static final double kIntakeShootSpeed = -0.6;
             public static final double kIntakeReverseSpeed = 0.4;
             public static final double kPushingNodeInRounds = 1;
             public static final double kShooterSpeed = -0.1;
