@@ -5,7 +5,10 @@ import frc.robot.Robot;
 import frc.robot.Constants.Intake;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.util.Color;
 
+import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
@@ -49,7 +52,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+        int proximity = m_colorSensor.getProximity();
+        SmartDashboard.putNumber("IR Proximity", proximity);
         SmartDashboard.putNumber("intake speed", m_motor_left.getAppliedOutput());
         SmartDashboard.putNumber("intake voltage", m_motor_left.getBusVoltage());
+
     }
 }
