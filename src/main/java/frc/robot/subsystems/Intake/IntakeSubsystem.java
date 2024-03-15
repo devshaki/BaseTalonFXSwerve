@@ -17,6 +17,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax m_motor_left, m_motor_right;
+    private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
     public IntakeSubsystem() {
         this.m_motor_left = new CANSparkMax(Intake.Motors.kUpperMotorLeftID, CANSparkLowLevel.MotorType.kBrushless);
