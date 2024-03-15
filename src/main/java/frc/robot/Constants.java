@@ -13,7 +13,7 @@ import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
-    public static final double stickDeadband = 0.25;
+    public static final double stickDeadband = 0.1;
 
     public static class OI {
         public static final int kXboxControllerPort = 0;
@@ -68,12 +68,12 @@ public final class Constants {
             public static final double encoderOffset = 156;
             public static final double gearRatio = 1 / 25.0;
             public static final double ampAngle = 110;
-            public static final double speakerAngle = 7 ;
+            public static final double speakerAngle = 3 ;
+            public static final double speakerAngleFar = 20;
             public static final double driveAngle = 40;
             public static final double kThreashold = 0;
-            public static final double kIntakeAngle = 5;
+            public static final double kIntakeAngle = 0;
             public static final double climbAngle = 0;
-            public static final double speakerAngleFar = 24;
         }
 
         public static class Encoders {
