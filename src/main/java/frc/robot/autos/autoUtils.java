@@ -17,6 +17,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -29,17 +30,34 @@ import frc.robot.subsystems.Intake.IntakeSubsystem;
 import frc.robot.subsystems.Shooter.ShooterSubsystem;
 
 public class autoUtils {
-    public static SwerveControllerCommand CommandFromTrajectory(Trajectory trajectory, Swerve swerve, ProfiledPIDController thetaController)
+    public static TrajectoryConfig trajectoryConfig =
+    new TrajectoryConfig(
+            Constants.AutoConstants.kMaxSpeedMetersPerSecond/2.0,
+            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        .setKinematics(Constants.Swerve.swerveKinematics);
+
+    public static SwerveControllerCommand CommandFromTrajectory(Trajectory trajectory, Swerve swerve)
     {
-        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(trajectory,
+        final ProfiledPIDController thetaController =
+        new ProfiledPIDController(
+        Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
+    
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+
+        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+        trajectory,
         swerve::getPoseInvertedGyro,
         Constants.Swerve.swerveKinematics,
         new PIDController(Constants.AutoConstants.kPXController, 0, 0),
         new PIDController(Constants.AutoConstants.kPYController, 0, 0),
         thetaController,
         swerve::setModuleStates,
-        swerve);
+        swerve
+        );
 
         return swerveControllerCommand;
     }
+
+    
 }

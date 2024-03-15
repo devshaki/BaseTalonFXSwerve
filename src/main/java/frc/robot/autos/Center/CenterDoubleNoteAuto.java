@@ -47,7 +47,7 @@ public class CenterDoubleNoteAuto extends SequentialCommandGroup {
 
         SwerveControllerCommand SwerveControllerCommand = new SwerveControllerCommand(
                 Trajectory,
-                s_Swerve::getPoseInvertedGyro,
+                s_Swerve::getPose,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),

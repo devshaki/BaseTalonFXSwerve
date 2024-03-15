@@ -18,47 +18,23 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
+import frc.robot.autos.autoUtils;
+
 public class testAuto extends SequentialCommandGroup {
     public testAuto(Swerve s_Swerve){
-        TrajectoryConfig config =
-            new TrajectoryConfig(
-                    Constants.AutoConstants.kMaxSpeedMetersPerSecond/2.0,
-                    Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                .setKinematics(Constants.Swerve.swerveKinematics);
-
-        // An example trajectory to follow.  All units in meters.
-        // Trajectory exampleTrajectory =
-        // TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0, 0, Rotation2d.fromDegrees(0)), new Pose2d(-1, 0, Rotation2d.fromDegrees(0)),new Pose2d(-1, -1, Rotation2d.fromDegrees(0)),new Pose2d(0, 0, Rotation2d.fromDegrees(0))), config);
+        
         Trajectory exampleTrajectory =
             TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through these two interior waypoints, making an 's' curve path
-                List.of(new Translation2d(-1, 0), new Translation2d(-1, -1)),
-                // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(0, 0, new Rotation2d(0)),
-                config);
-
-        var thetaController =
-            new ProfiledPIDController(
-                Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-        SwerveControllerCommand swerveControllerCommand =
-            new SwerveControllerCommand(
-                exampleTrajectory,
-                s_Swerve::getPoseInvertedGyro,
-                Constants.Swerve.swerveKinematics,
-                new PIDController(Constants.AutoConstants.kPXController, 0, 0),
-                new PIDController(Constants.AutoConstants.kPYController, 0, 0),
-                thetaController,
-                s_Swerve::setModuleStates,
-                s_Swerve);
-
+                List.of(
+                    new Pose2d(0, 0, new Rotation2d(0)),
+                    new Pose2d(3, 0, Rotation2d.fromDegrees(0))
+                    ),
+                autoUtils.trajectoryConfig);
 
         addCommands(
             new InstantCommand(() -> s_Swerve.setPose(exampleTrajectory.getInitialPose())),
-            swerveControllerCommand
+            // autoUtils.CommandFromTrajectory(exampleTrajectory, s_Swerve)
+            new rotateAuto(s_Swerve,Rotation2d.fromDegrees(90))
         );
     }
 }

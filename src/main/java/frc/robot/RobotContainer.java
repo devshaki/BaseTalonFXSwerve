@@ -14,11 +14,13 @@ import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.autos.*;
 import frc.robot.autos.Center.CenterTripleNoteAuto;
+import frc.robot.autos.Center.CenterTripleNoteAutoRotate;
 import frc.robot.autos.Left.LeftDoubleNoteAuto;
 import frc.robot.commands.*;
 import frc.robot.commands.Arm.ArmCommand;
 import frc.robot.commands.Arm.HoldCommand;
 import frc.robot.commands.Intake.IntakeCommand;
+import frc.robot.commands.Intake.IntakeGroup;
 import frc.robot.commands.Intake.IntakeNodeCommand;
 import frc.robot.commands.Shooter.ShootSmartRPMCommand;
 import frc.robot.subsystems.*;
@@ -55,6 +57,7 @@ public class RobotContainer {
 
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
+    private final JoystickButton rotateToSpeaker = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
     /* Subsystems */
@@ -93,10 +96,12 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        rotateToSpeaker.whileTrue(new InstantCommand(() -> s_Swerve.targetHeading = 0));
+
+
         /* Intake Button */
         oi.commandXboxController.a()
-                .whileTrue(new ParallelCommandGroup(new ArmCommand(m_ArmSubsystem, Arm.Stats.kIntakeAngle),
-                        new IntakeNodeCommand(m_IntakeSubsystem, m_ShooterSubsystem)));// Intake command group
+                .whileTrue(new IntakeGroup(m_ArmSubsystem,m_IntakeSubsystem, m_ShooterSubsystem).onlyWhile(m_IntakeSubsystem::isNotLoaded));// Intake command group
         /* Shooter Buttons */
         oi.commandXboxController.rightBumper()
                 .whileTrue(new ParallelCommandGroup(new ShootSmartRPMCommand(m_ShooterSubsystem, 4500),
@@ -132,8 +137,6 @@ public class RobotContainer {
                 new InstantCommand(() -> s_Swerve.setPose(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)))),
                 new ArmCommand(m_ArmSubsystem, 20).withTimeout(1),
                 new CenterTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem)).withTimeout(15),
-                new InstantCommand(() -> s_Swerve.zeroModules()));
-        // new SingleNoteAuto(m_ArmSubsystem, m_ShooterSubsystem,
-        // m_IntakeSubsystem,Constants.Arm.Stats.speakerAngleFar));
+                new InstantCommand(() -> s_Swerve.zeroModules()));        
     }
 }

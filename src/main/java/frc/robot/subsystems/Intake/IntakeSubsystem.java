@@ -17,6 +17,9 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax m_motor_left, m_motor_right;
+    private final I2C.Port i2cPort = I2C.Port.kOnboard;
+    private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+    private boolean isIntakeLoaded = false;
 
     public IntakeSubsystem() {
         this.m_motor_left = new CANSparkMax(Intake.Motors.kUpperMotorLeftID, CANSparkLowLevel.MotorType.kBrushless);
@@ -40,6 +43,14 @@ public class IntakeSubsystem extends SubsystemBase {
         // * -1, ControlType.kPosition);
     }
 
+    public boolean isLoaded(){
+        return isIntakeLoaded;
+    }
+
+    public boolean isNotLoaded(){
+        return !isIntakeLoaded;
+    }
+
     public void setSpeed(double speed) {
         m_motor_left.set(speed);
         m_motor_right.set(speed * -1);
@@ -54,7 +65,8 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {
 
         int proximity = m_colorSensor.getProximity();
-        SmartDashboard.putNumber("IR Proximity", proximity);
+        isIntakeLoaded = proximity > Intake.Stats.kProximitySensorThreshold;
+        SmartDashboard.putBoolean("Intake Loaded", isIntakeLoaded);
         SmartDashboard.putNumber("intake speed", m_motor_left.getAppliedOutput());
         SmartDashboard.putNumber("intake voltage", m_motor_left.getBusVoltage());
 

@@ -23,6 +23,7 @@ public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public AHRS gyro;
+    public double targetHeading = -999;
 
     public Swerve() {
 

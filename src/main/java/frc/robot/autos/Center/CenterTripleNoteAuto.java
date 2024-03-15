@@ -49,7 +49,7 @@ public class CenterTripleNoteAuto extends SequentialCommandGroup {
 
         SwerveControllerCommand SwerveControllerCommand = new SwerveControllerCommand(
                 Trajectory,
-                s_Swerve::getPoseInvertedGyro,
+                s_Swerve::getPose,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
@@ -65,7 +65,7 @@ public class CenterTripleNoteAuto extends SequentialCommandGroup {
 
         SwerveControllerCommand SwerveControllerCommand2 = new SwerveControllerCommand(
                 Trajectory2,
-                s_Swerve::getPoseInvertedGyro,
+                s_Swerve::getPose,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),

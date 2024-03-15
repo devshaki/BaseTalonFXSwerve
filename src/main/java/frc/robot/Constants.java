@@ -33,6 +33,7 @@ public final class Constants {
             public static final double kIntakeReverseSpeed = 0.4;
             public static final double kPushingNodeInRounds = 1;
             public static final double kShooterSpeed = -0.1;
+            public static final double kProximitySensorThreshold = 55;
         }
     }
 
@@ -219,9 +220,11 @@ public final class Constants {
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-        public static final double kPXController = 1;
-        public static final double kPYController = 1;
-        public static final double kPThetaController = 1;
+        public static final double kPXController = 20.0;
+        public static final double kPYController = 20;
+        public static final double kPThetaController = 4.0;
+
+        public static final double kPThetaControllerDrive = 0.1;
 
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(

@@ -25,7 +25,10 @@ public class IntakeNodeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        if(intakeSubsystem.isLoaded()){
+            end(true);
+        }
+        return intakeSubsystem.isLoaded();
     }
 
     @Override
