@@ -34,7 +34,7 @@ public class LeftDoubleNoteAuto extends SequentialCommandGroup {
     public LeftDoubleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
         Trajectory TrajectoryB = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(1.2, 0, Rotation2d.fromDegrees(0)),
-                List.of(new Translation2d(0.5,0.5)),
+                List.of(new Translation2d(0.5,0.1)),
                 new Pose2d(0.0, 0, new Rotation2d(0)),
                 autoUtils.trajectoryConfig());
 

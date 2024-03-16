@@ -73,13 +73,18 @@ public class RobotContainer {
         this.m_ShooterSubsystem = new ShooterSubsystem();
         this.m_ArmSubsystem = new ArmSubsystem();
 
-        m_chooser.setDefaultOption("C3L", new CenterTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
+        m_chooser.setDefaultOption("C3L", new CenterTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem, false));
+        m_chooser.setDefaultOption("C3R", new CenterTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem, true));
         m_chooser.addOption("C2", new CenterDoubleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
         m_chooser.addOption("C1", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
 
         m_chooser.addOption("L3", new LeftTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
         m_chooser.addOption("L2", new LeftDoubleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
         m_chooser.addOption("L1", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
+
+        m_chooser.addOption("R1", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
+
+        m_chooser.addOption("N", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
 
         SmartDashboard.putData(m_chooser);
 
@@ -144,11 +149,11 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-
+        Command autoCommand = m_chooser.getSelected();
         return new SequentialCommandGroup(new SequentialCommandGroup(
                 new InstantCommand(() -> s_Swerve.setPose(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)))),
                 new ArmCommand(m_ArmSubsystem, 20).withTimeout(1),
-                m_chooser.getSelected()).withTimeout(15),
+                autoCommand).withTimeout(15),
                 new InstantCommand(() -> s_Swerve.zeroModules()));        
     }
 }

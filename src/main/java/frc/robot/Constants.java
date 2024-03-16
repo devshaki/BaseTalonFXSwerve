@@ -52,8 +52,8 @@ public final class Constants {
         }
 
         public static class PID {
-            public static final double kP = 0.15;
-            public static final double kI = 0;
+            public static final double kP = 0.85;
+            public static final double kI = 0.00;
             public static final double kD = 0;
         }
     }
