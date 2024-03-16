@@ -18,8 +18,9 @@ public class rotateAuto extends Command {
         public rotateAuto(Swerve swerveSubsystem, Rotation2d targetAngle) {
             this.swerveSubsystem = swerveSubsystem;
             this.swerveSubsystem.targetHeading = targetAngle.getDegrees();
-            thetaController = new PIDController(0.01, 0, 0);
+            thetaController = new PIDController(Constants.AutoConstants.kPThetaControllerDrive, 0.0, 0);
             thetaController.enableContinuousInput(-180, 180);
+            thetaController.setTolerance(2.5);
             thetaController.setSetpoint(targetAngle.getDegrees());
             addRequirements(swerveSubsystem);
         }
@@ -32,8 +33,8 @@ public class rotateAuto extends Command {
         @Override
         public boolean isFinished() {
             SmartDashboard.putNumber("Robot Target Heading", thetaController.getSetpoint());
-            swerveSubsystem.drive(new Translation2d(0,0), thetaController.calculate(swerveSubsystem.getHeading().getDegrees()), true, false);
-            return (Math.abs(swerveSubsystem.getPoseInvertedGyro().getRotation().getDegrees() - this.swerveSubsystem.targetHeading) < 2.5);
+            swerveSubsystem.drive(new Translation2d(0,0), thetaController.calculate(-swerveSubsystem.getHeading().getDegrees()), true, false);
+            return Math.abs(thetaController.getPositionError()) < 2.5;
         }
 
         @Override

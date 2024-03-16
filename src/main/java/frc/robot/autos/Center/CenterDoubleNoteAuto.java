@@ -38,7 +38,7 @@ public class CenterDoubleNoteAuto extends SequentialCommandGroup {
         Trajectory Trajectory = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0, 0, new Rotation2d(0)),
                 List.of(),
-                new Pose2d(Units.inchesToMeters(45), 0, new Rotation2d(0)),
+                new Pose2d(Units.inchesToMeters(50), 0, new Rotation2d(0)),
                 config);
 
         var thetaController = new ProfiledPIDController(

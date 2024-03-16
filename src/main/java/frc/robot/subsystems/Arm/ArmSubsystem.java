@@ -90,6 +90,7 @@ public class ArmSubsystem extends SubsystemBase {
     public void periodic() {
         
         SmartDashboard.putNumber("Arm Angle", getAngle());
+        SmartDashboard.putNumber("Arm Angle [Drivers]", 90 - getAngle());
         SmartDashboard.putNumber("arm_left_output", m_motor_left.getAppliedOutput());
         // SmartDashboard.putNumber("arm_right_output", m_motor_right.getAppliedOutput());
 

@@ -10,7 +10,7 @@ import frc.robot.subsystems.Shooter.ShooterSubsystem;
 
 public class intakeNoteAuto extends ParallelCommandGroup {
     public intakeNoteAuto(ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake){
-    addCommands(new ArmCommand(arm, Arm.Stats.kIntakeAngle),
+    addCommands(new ArmCommand(arm, Arm.Stats.kIntakeAngle-2.5),
                         new IntakeNodeCommand(intake, shooters));
     }
 }

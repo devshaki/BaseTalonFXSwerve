@@ -30,25 +30,26 @@ import frc.robot.subsystems.Arm.ArmSubsystem;
 import frc.robot.subsystems.Intake.IntakeSubsystem;
 import frc.robot.subsystems.Shooter.ShooterSubsystem;
 
-public class LeftDoubleNoteAuto extends SequentialCommandGroup {
-    public LeftDoubleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
-        Trajectory TrajectoryB = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(1.2, 0, Rotation2d.fromDegrees(0)),
-                List.of(new Translation2d(0.5,0.5)),
-                new Pose2d(0.0, 0, new Rotation2d(0)),
+public class LeftSingleNoteAuto extends SequentialCommandGroup {
+    public LeftSingleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
+        Trajectory TrajectoryA = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                List.of(),
+                new Pose2d(1, 0, new Rotation2d(0)),
                 autoUtils.trajectoryConfig());
 
-        var TrajecotryCommandB = autoUtils.CommandFromTrajectory(TrajectoryB, s_Swerve);
+        var TrajecotryCommandA = autoUtils.CommandFromTrajectory(TrajectoryA, s_Swerve);
 
         addCommands(
-                new LeftSingleNoteAuto(s_Swerve,arm,shooters,intake),
-                new InstantCommand(() -> s_Swerve.setPose(TrajectoryB.getInitialPose())), // SET INITIAL POSITIONs
-                TrajecotryCommandB,
-
                 new InstantCommand(() -> s_Swerve.zeroHeading()), // SET INITIAL POSITIONs
                 new rotateAuto(s_Swerve, Rotation2d.fromDegrees(-45)),
-                new SingleNoteAuto(arm, shooters, intake, Constants.Arm.Stats.speakerAngleFarAngle), // SHOOT LOADED NOTE
-                new rotateAuto(s_Swerve, Rotation2d.fromDegrees(0))
+                new SingleNoteAuto(arm, shooters, intake, Constants.Arm.Stats.speakerAngleCloseAngle), // SHOOT LOADED NOTE
+                new rotateAuto(s_Swerve, Rotation2d.fromDegrees(0)),
+
+                // 
+                
+                new InstantCommand(() -> s_Swerve.setPose(TrajectoryA.getInitialPose())), // SET INITIAL POSITIONs
+                TrajecotryCommandA.alongWith(new intakeNoteAuto(arm, shooters, intake).onlyWhile(() -> !TrajecotryCommandA.isFinished()))
         );
     }
 }

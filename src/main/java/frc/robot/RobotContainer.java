@@ -5,6 +5,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -12,22 +14,22 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
-import frc.robot.autos.*;
+import frc.robot.Constants.Shooter;
+import frc.robot.autos.Center.CenterDoubleNoteAuto;
 import frc.robot.autos.Center.CenterTripleNoteAuto;
-import frc.robot.autos.Center.CenterTripleNoteAutoRotate;
 import frc.robot.autos.Left.LeftDoubleNoteAuto;
+import frc.robot.autos.Left.LeftTripleNoteAuto;
+import frc.robot.autos.SubCommand.SingleNoteAuto;
 import frc.robot.commands.*;
 import frc.robot.commands.Arm.ArmCommand;
 import frc.robot.commands.Arm.HoldCommand;
 import frc.robot.commands.Intake.IntakeCommand;
 import frc.robot.commands.Intake.IntakeGroup;
-import frc.robot.commands.Intake.IntakeNodeCommand;
 import frc.robot.commands.Shooter.ShootSmartRPMCommand;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Arm.ArmSubsystem;
 import frc.robot.subsystems.Intake.IntakeSubsystem;
 import frc.robot.subsystems.Shooter.ShooterSubsystem;
-import frc.robot.subsystems.Arm.ArmSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -42,26 +44,25 @@ public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(frc.robot.Constants.OI.kXboxControllerPort + 1);
 
-    // thee arm
-    private final ArmSubsystem m_ArmSubsystem;
-
-    private final IntakeSubsystem m_IntakeSubsystem;
-    private final ShooterSubsystem m_ShooterSubsystem;
-    private final OI oi;
-
     /* Drive Controls */
+    private final OI oi;
     private final int translationAxis = XboxController.Axis.kLeftY.value;
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
     private final int speedModAxis = XboxController.Axis.kRightTrigger.value;
-
+    
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton rotateToSpeaker = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-
+    
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
+    private final ArmSubsystem m_ArmSubsystem;
+    private final IntakeSubsystem m_IntakeSubsystem;
+    private final ShooterSubsystem m_ShooterSubsystem;
+
+    SendableChooser<Command> m_chooser = new SendableChooser<>();
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -71,6 +72,17 @@ public class RobotContainer {
         this.m_IntakeSubsystem = new IntakeSubsystem();
         this.m_ShooterSubsystem = new ShooterSubsystem();
         this.m_ArmSubsystem = new ArmSubsystem();
+
+        m_chooser.setDefaultOption("C3L", new CenterTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
+        m_chooser.addOption("C2", new CenterDoubleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
+        m_chooser.addOption("C1", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
+
+        m_chooser.addOption("L3", new LeftTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
+        m_chooser.addOption("L2", new LeftDoubleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
+        m_chooser.addOption("L1", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
+
+        SmartDashboard.putData(m_chooser);
+
         s_Swerve.setDefaultCommand(
                 new TeleopSwerve(
                         s_Swerve,
@@ -136,7 +148,7 @@ public class RobotContainer {
         return new SequentialCommandGroup(new SequentialCommandGroup(
                 new InstantCommand(() -> s_Swerve.setPose(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)))),
                 new ArmCommand(m_ArmSubsystem, 20).withTimeout(1),
-                new CenterTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem)).withTimeout(15),
+                m_chooser.getSelected()).withTimeout(15),
                 new InstantCommand(() -> s_Swerve.zeroModules()));        
     }
 }
