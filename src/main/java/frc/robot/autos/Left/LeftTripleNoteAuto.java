@@ -36,7 +36,7 @@ import frc.robot.subsystems.Intake.IntakeSubsystem;
 import frc.robot.subsystems.Shooter.ShooterSubsystem;
 
 public class LeftTripleNoteAuto extends SequentialCommandGroup {
-    public LeftTripleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
+    public LeftTripleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake, boolean inverted) {
         Trajectory TrajectoryB = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
                 List.of(new Translation2d(4.0,0.0)),
@@ -46,7 +46,7 @@ public class LeftTripleNoteAuto extends SequentialCommandGroup {
         var TrajecotryCommandB = autoUtils.CommandFromTrajectory(TrajectoryB, s_Swerve);
 
         addCommands(
-                new LeftDoubleNoteAuto(s_Swerve,arm,shooters,intake),
+                new LeftDoubleNoteAuto(s_Swerve,arm,shooters,intake, inverted),
                 new InstantCommand(() -> s_Swerve.setPose(TrajectoryB.getInitialPose())), // SET INITIAL POSITIONs
                 TrajecotryCommandB.alongWith(new ParallelCommandGroup(
                     new ArmCommand(arm, Arm.Stats.kIntakeAngle-2.5),

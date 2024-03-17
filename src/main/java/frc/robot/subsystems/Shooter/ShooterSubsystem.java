@@ -35,19 +35,19 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void SetRPM(double speed) {
-        // m_left_pid.setReference(speed, ControlType.kVelocity);
-        // m_right_pid.setReference(-speed, ControlType.kVelocity);
+        m_left_pid.setReference(speed, ControlType.kVelocity);
+        m_right_pid.setReference(-speed, ControlType.kVelocity);
 
     }
 
     public void setVoltage(double voltage) {
-        // m_motor_right.setVoltage(voltage);
-        // m_motor_left.setVoltage(-voltage);
+        m_motor_right.setVoltage(voltage);
+        m_motor_left.setVoltage(-voltage);
     }
 
     public void setSpeed(double rpm) {
-        // m_motor_right.getPIDController().setReference(rpm, ControlType.kVelocity);
-        // m_motor_left.getPIDController().setReference(-rpm, ControlType.kVelocity);
+        m_motor_right.getPIDController().setReference(rpm, ControlType.kVelocity);
+        m_motor_left.getPIDController().setReference(-rpm, ControlType.kVelocity);
     }
 
     @Override

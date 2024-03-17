@@ -18,6 +18,7 @@ import frc.robot.Constants.Shooter;
 import frc.robot.autos.Center.CenterDoubleNoteAuto;
 import frc.robot.autos.Center.CenterTripleNoteAuto;
 import frc.robot.autos.Left.LeftDoubleNoteAuto;
+import frc.robot.autos.Left.LeftSingleNoteAuto;
 import frc.robot.autos.Left.LeftTripleNoteAuto;
 import frc.robot.autos.SubCommand.SingleNoteAuto;
 import frc.robot.commands.*;
@@ -78,11 +79,14 @@ public class RobotContainer {
         m_chooser.addOption("C2", new CenterDoubleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
         m_chooser.addOption("C1", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
 
-        m_chooser.addOption("L3", new LeftTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
-        m_chooser.addOption("L2", new LeftDoubleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
-        m_chooser.addOption("L1", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
+        m_chooser.addOption("L3", new LeftTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem, false));
+        m_chooser.addOption("L2", new LeftDoubleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem, false));
+        m_chooser.addOption("L1", new LeftSingleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem, false));
 
-        m_chooser.addOption("R1", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
+        m_chooser.addOption("R3", new LeftTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem, true));
+        m_chooser.addOption("R2", new LeftDoubleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem, true));
+        m_chooser.addOption("R1", new LeftSingleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem, true));
+
 
         m_chooser.addOption("N", new InstantCommand(() -> {}));
 
@@ -158,8 +162,9 @@ public class RobotContainer {
         Command autoCommand = m_chooser.getSelected();
         return new SequentialCommandGroup(new SequentialCommandGroup(
                 new InstantCommand(() -> s_Swerve.setPose(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)))),
-                new InstantCommand(() -> m_ArmSubsystem.setMaxVoltage(1)),
-                new ArmCommand(m_ArmSubsystem, 30).withTimeout(2),
+                new InstantCommand(() -> m_ArmSubsystem.setMaxVoltage(2)),
+                new ArmCommand(m_ArmSubsystem, Arm.Stats.speakerAngle).withTimeout(2),
+                new InstantCommand(() -> m_ArmSubsystem.setMaxVoltage(Arm.Stats.maxVoltage)),
                 autoCommand).withTimeout(15),
                 new InstantCommand(() -> s_Swerve.zeroModules()));     
     }

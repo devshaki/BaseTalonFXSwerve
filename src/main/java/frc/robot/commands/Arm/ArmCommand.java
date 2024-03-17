@@ -23,6 +23,7 @@ public class ArmCommand extends Command {
 
     @Override
     public boolean isFinished() {
+        SmartDashboard.putBoolean("Arm Correct", Math.abs(armSubsystem.getAngle() - angle) < Arm.Stats.kThreashold);
         return Math.abs(armSubsystem.getAngle() - angle) < Arm.Stats.kThreashold;
     }
 

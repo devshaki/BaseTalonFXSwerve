@@ -31,7 +31,7 @@ import frc.robot.subsystems.Intake.IntakeSubsystem;
 import frc.robot.subsystems.Shooter.ShooterSubsystem;
 
 public class LeftSingleNoteAuto extends SequentialCommandGroup {
-    public LeftSingleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake) {
+    public LeftSingleNoteAuto(Swerve s_Swerve, ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake, boolean inverted) {
         Trajectory TrajectoryA = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
                 List.of(),
@@ -42,7 +42,7 @@ public class LeftSingleNoteAuto extends SequentialCommandGroup {
 
         addCommands(
                 new InstantCommand(() -> s_Swerve.zeroHeading()), // SET INITIAL POSITIONs
-                new rotateAuto(s_Swerve, Rotation2d.fromDegrees(-45)),
+                new rotateAuto(s_Swerve, Rotation2d.fromDegrees(-45 * (inverted ? -1 : 1))),
                 new SingleNoteAuto(arm, shooters, intake, Constants.Arm.Stats.speakerAngleCloseAngle), // SHOOT LOADED NOTE
                 new rotateAuto(s_Swerve, Rotation2d.fromDegrees(0)),
 

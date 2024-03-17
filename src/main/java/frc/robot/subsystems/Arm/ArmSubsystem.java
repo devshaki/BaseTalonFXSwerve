@@ -30,7 +30,7 @@ import frc.robot.commands.Arm.HoldCommand;
 public class ArmSubsystem extends SubsystemBase {
     private final CANSparkMax m_motor_left, m_motor_right;
     private final DutyCycleEncoder m_encoder;
-    private double maxVoltage = 1;
+    private double maxVoltage = 12;
 
     private PIDController pidController = new PIDController(Arm.Pid.kP, Arm.Pid.kD, Arm.Pid.kI);
     
@@ -75,7 +75,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void SetAngle(double TargetAngle) {
         pidController.setSetpoint(TargetAngle);
-        SmartDashboard.putNumber("arm_setpoint", TargetAngle);
     }
 
     public void setAngleToCurrent() {
@@ -100,8 +99,11 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void execute() {
-        double voltage = Math.min(Math.max(-maxVoltage,pidController.calculate(getAngle())), maxVoltage);
-        // voltage = pidController.calculate(getAngle());
+        double voltage = 0;
+        if(Math.abs(maxVoltage) > 12)
+            voltage = pidController.calculate(getAngle());
+        else
+            voltage = Math.min(Math.max(-maxVoltage,pidController.calculate(getAngle())), maxVoltage);
         setVoltage(voltage);
     }
 
@@ -111,6 +113,9 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Arm Angle", getAngle());
         SmartDashboard.putNumber("Arm Angle [Drivers]", 90 - getAngle());
         SmartDashboard.putNumber("arm_left_output", m_motor_left.getAppliedOutput());
+        SmartDashboard.putNumber("arm_setpoint", pidController.getSetpoint());
+        double[] armdata = {pidController.getSetpoint(), getAngle()}; 
+        SmartDashboard.putNumberArray("Arm Data",armdata);
         // SmartDashboard.putNumber("arm_right_output", m_motor_right.getAppliedOutput());
 
         pidController.setP(SmartDashboard.getNumber("Arm kP", 0));
