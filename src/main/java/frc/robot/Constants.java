@@ -71,13 +71,15 @@ public final class Constants {
             public static final double gearRatio = 1 / 25.0;
             public static final double ampAngle = 110;
             public static final double speakerAngle = 3 ;
-            public static final double speakerAngleCloseAngle = 10 ;
+            public static final double speakerAngleCloseAngle = 15 ;
             public static final double speakerAngleFar = 20;
             public static final double speakerAngleFarAngle = 15;
             public static final double driveAngle = 40;
             public static final double kThreashold = 0;
             public static final double kIntakeAngle = 0;
             public static final double climbAngle = 0;
+
+            public static final double maxVoltage = 20;
         }
 
         public static class Encoders {

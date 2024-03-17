@@ -1,5 +1,6 @@
 package frc.robot.autos.SubCommand;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -17,6 +18,7 @@ public class SingleNoteAuto extends SequentialCommandGroup {
     public SingleNoteAuto(ArmSubsystem arm, ShooterSubsystem shooters, IntakeSubsystem intake, double ShooterAngle) {
         addCommands(
                 new ParallelCommandGroup(
+                        new InstantCommand(() -> arm.setMaxVoltage(Arm.Stats.maxVoltage)),
                         new ShootSmartRPMCommand(shooters, 4500),
                         new ArmCommand(arm, ShooterAngle),
                         new SequentialCommandGroup(

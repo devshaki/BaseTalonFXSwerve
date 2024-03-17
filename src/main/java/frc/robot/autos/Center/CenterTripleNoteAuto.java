@@ -41,7 +41,7 @@ public class CenterTripleNoteAuto extends SequentialCommandGroup {
         Trajectory Trajectory = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(Units.inchesToMeters(45), 0, new Rotation2d(0)),
                 List.of(new Translation2d(Units.inchesToMeters(20), Units.inchesToMeters(35 * directionMod))),
-                new Pose2d(Units.inchesToMeters(65), Units.inchesToMeters(65 * directionMod), new Rotation2d(0)),
+                new Pose2d(Units.inchesToMeters(65), Units.inchesToMeters(70 * directionMod), new Rotation2d(0)),
                 config);
 
         var thetaController = new ProfiledPIDController(
@@ -60,7 +60,7 @@ public class CenterTripleNoteAuto extends SequentialCommandGroup {
                 s_Swerve);
 
         Trajectory Trajectory2 = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(Units.inchesToMeters(65), Units.inchesToMeters(60 * directionMod), new Rotation2d(0)),
+                new Pose2d(Units.inchesToMeters(65), Units.inchesToMeters(70 * directionMod), new Rotation2d(0)),
                 List.of(),
                 new Pose2d(Units.inchesToMeters(45), Units.inchesToMeters(0), new Rotation2d(0)),
                 config);

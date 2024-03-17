@@ -74,7 +74,7 @@ public class RobotContainer {
         this.m_ArmSubsystem = new ArmSubsystem();
 
         m_chooser.setDefaultOption("C3L", new CenterTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem, false));
-        m_chooser.setDefaultOption("C3R", new CenterTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem, true));
+        m_chooser.addOption("C3R", new CenterTripleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem, true));
         m_chooser.addOption("C2", new CenterDoubleNoteAuto(s_Swerve, m_ArmSubsystem, m_ShooterSubsystem, m_IntakeSubsystem));
         m_chooser.addOption("C1", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
 
@@ -84,7 +84,7 @@ public class RobotContainer {
 
         m_chooser.addOption("R1", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
 
-        m_chooser.addOption("N", new SingleNoteAuto(m_ArmSubsystem,m_ShooterSubsystem, m_IntakeSubsystem,Constants.Arm.Stats.speakerAngle));
+        m_chooser.addOption("N", new InstantCommand(() -> {}));
 
         SmartDashboard.putData(m_chooser);
 
@@ -123,19 +123,26 @@ public class RobotContainer {
         oi.commandXboxController.rightBumper()
                 .whileTrue(new ParallelCommandGroup(new ShootSmartRPMCommand(m_ShooterSubsystem, 4500),
                         new ArmCommand(m_ArmSubsystem, Arm.Stats.speakerAngle)));
+
+        oi.commandXboxController.leftBumper()
+                .whileTrue(new ParallelCommandGroup(new ShootSmartRPMCommand(m_ShooterSubsystem, 4500),
+                        new ArmCommand(m_ArmSubsystem, Arm.Stats.speakerAngleFar)));
+
         oi.commandXboxController.x().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeShootSpeed));
         /* Default command */
-        m_ArmSubsystem.setDefaultCommand(new HoldCommand(m_ArmSubsystem));
+
         /* Reversed intake */
         oi.commandXboxController.y().whileTrue(new IntakeCommand(m_IntakeSubsystem, Intake.Stats.kIntakeReverseSpeed));
+
+        oi.commandXboxController.b().whileTrue(new ArmCommand(m_ArmSubsystem, Arm.Stats.kIntakeAngle));
 
         // oi.commandXboxController.b().whileTrue(new ArmCommand(m_ArmSubsystem,
         // Arm.Stats.kIntakeAngle));
 
-        // oi.commandXboxController.rightBumper()
-        // .whileTrue(new ParallelCommandGroup(new
-        // ShootSmartRPMCommand(m_ShooterSubsystem, 4500),
-        // new ArmCommand(m_ArmSubsystem, Arm.Stats.speakerAngle)));
+        oi.commandXboxController.rightBumper()
+        .whileTrue(new ParallelCommandGroup(new
+        ShootSmartRPMCommand(m_ShooterSubsystem, 4500),
+        new ArmCommand(m_ArmSubsystem, Arm.Stats.speakerAngle)));
 
         // oi.commandXboxController.leftBumper()
         // .whileTrue(new ArmCommand(m_ArmSubsystem, Arm.Stats.ampAngle));
@@ -148,12 +155,12 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // An ExampleCommand will run in autonomous
         Command autoCommand = m_chooser.getSelected();
         return new SequentialCommandGroup(new SequentialCommandGroup(
                 new InstantCommand(() -> s_Swerve.setPose(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)))),
-                new ArmCommand(m_ArmSubsystem, 20).withTimeout(1),
+                new InstantCommand(() -> m_ArmSubsystem.setMaxVoltage(1)),
+                new ArmCommand(m_ArmSubsystem, 30).withTimeout(2),
                 autoCommand).withTimeout(15),
-                new InstantCommand(() -> s_Swerve.zeroModules()));        
+                new InstantCommand(() -> s_Swerve.zeroModules()));     
     }
 }

@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Arm;
 
+import java.lang.annotation.Target;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -13,6 +15,9 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,13 +25,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Arm;
+import frc.robot.commands.Arm.HoldCommand;
 
 public class ArmSubsystem extends SubsystemBase {
     private final CANSparkMax m_motor_left, m_motor_right;
     private final DutyCycleEncoder m_encoder;
+    private double maxVoltage = 1;
 
     private PIDController pidController = new PIDController(Arm.Pid.kP, Arm.Pid.kD, Arm.Pid.kI);
-
+    
     public ArmSubsystem() {
         m_motor_left = new CANSparkMax(Arm.Motors.kLeftMotorID, MotorType.kBrushless);
         m_motor_right = new CANSparkMax(Arm.Motors.kRightMotorID, MotorType.kBrushless);
@@ -36,12 +43,15 @@ public class ArmSubsystem extends SubsystemBase {
         m_motor_right.burnFlash();
 
         m_encoder = new DutyCycleEncoder(Arm.Encoders.kLeftEncoderID);
-        pidController.disableContinuousInput();
+        pidController.enableContinuousInput(0,360);
         // pidController.setTolerance(1);
         this.setAngleToidle();
 
-            // m_motor_left.setSmartCurrentLimit(AllRobot.kAllMotorsLimitInAmpr);
+        // m_motor_left.setSmartCurrentLimit(AllRobot.kAllMotorsLimitInAmpr);
         // m_motor_right.setSmartCurrentLimit(AllRobot.kAllMotorsLimitInAmpr);
+        setAngleToCurrent();
+        setDefaultCommand(new HoldCommand(this));
+        
         m_motor_left.setIdleMode(IdleMode.kBrake);
         m_motor_right.setIdleMode(IdleMode.kBrake);
         
@@ -81,8 +91,17 @@ public class ArmSubsystem extends SubsystemBase {
         return 360 - (m_encoder.getAbsolutePosition() * 360.0)-Arm.Stats.encoderOffset;
     }
 
+    public double getMaxVoltage(){
+        return maxVoltage;
+    }
+
+    public void setMaxVoltage(double voltage){
+        this.maxVoltage = voltage;
+    }
+
     public void execute() {
-        double voltage = pidController.calculate(getAngle());
+        double voltage = Math.min(Math.max(-maxVoltage,pidController.calculate(getAngle())), maxVoltage);
+        // voltage = pidController.calculate(getAngle());
         setVoltage(voltage);
     }
 

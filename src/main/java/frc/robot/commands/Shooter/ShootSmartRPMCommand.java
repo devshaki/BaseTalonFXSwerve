@@ -23,7 +23,6 @@ public class ShootSmartRPMCommand extends Command {
     @Override
     public void initialize() {
         shooterSubsystem.setSpeed(this.m_speed);
-        System.out.println(this.m_speed);        // double speed =
         //
         // ShooterHandler.calcShooterAngleAndRPM(distance.getAsDouble()).getFirst();
         // shooterSubsystem.SetRPM(speed);
